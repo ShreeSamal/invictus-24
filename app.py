@@ -1,19 +1,40 @@
 from flask import Flask ,render_template, request, redirect
 import googleapiclient.discovery
 from datetime import datetime, timedelta
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
+
 from collections import OrderedDict
 
 API_KEY_A = 'AIzaSyAjKBo9q945sacH_cR7_wxj8G7T8F3B6p0'
 # API_KEY_A = 'AIzaSyAhd2CrnNgjDMFwSTa1JFz27btz1rv6M24'
+
 youtube_A = googleapiclient.discovery.build('youtube', 'v3', developerKey=API_KEY_A)
 
 local_server = True
 app = Flask(__name__)
+app.secret_key = "hqvfiuqeogfqlbqljl"
+# app.config["MONGO_URI"]="mongodb+srv://cfrost:P2JVTwefRIFHUWQX@invictus24.ilfsi9p.mongodb.net/?retryWrites=true&w=majority"
+# db = PyMongo(app).db
+
+uri = "mongodb+srv://cfrost:P2JVTwefRIFHUWQX@invictus24.ilfsi9p.mongodb.net/?retryWrites=true&w=majority"
+
+# Create a new client and connect to the server
+client = MongoClient(uri, server_api=ServerApi('1'))
+# Send a ping to confirm a successful connection
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
+
+db = client.test
+video_collection = db.videos
 
 def get_trending_videos_until_yesterday(max_results=10):
     # Set the publishedAfter and publishedBefore parameters for yesterday
@@ -179,6 +200,23 @@ def serach_results():
     else:
         search_video_dict = search_videos_top_10(keyword)
         return render_template("search_result.html", search_video_dict = search_video_dict)
+
+@app.route("/caption/summary/<string:video_id>", methods=['GET', 'POST'])
+def caption_summary(video_id):
+    if request.method == 'POST':
+        data = request.get_json()
+        video = video_collection.find_one({'video_id':video_id})
+        if video:
+            return video['summary']
+        else:
+            video = video_collection.insert_one({'video_id':video_id, 'summary':data['summary']})
+            return video['summary']
+    else:
+        video = video_collection.find_one({'video_id':video_id})
+        if video:
+            return video['summary']
+        else:
+            return ""
 
 if __name__ == '__main__':  
    app.run(debug = True)
