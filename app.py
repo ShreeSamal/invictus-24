@@ -36,7 +36,7 @@ except Exception as e:
 db = client.test
 video_collection = db.videos
 
-def get_trending_videos_until_yesterday(max_results=10):
+def get_trending_videos_until_yesterday(max_results=8):
     # Set the publishedAfter and publishedBefore parameters for yesterday
     yesterday = datetime.utcnow() - timedelta(days=1)
     published_after = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -125,6 +125,8 @@ def search_videos(query, max_results=6):
 
     return video_details_dict
 
+
+
 def search_videos_top_10(query, max_results=10):
     request = youtube_A.search().list(
         q=query,
@@ -168,6 +170,34 @@ def search_videos_top_10(query, max_results=10):
         }
 
     return video_details_dict
+
+def get_video_details(video_id):
+    # Get video details using API call
+    request = youtube_A.videos().list(
+        part='snippet,statistics',
+        id=video_id
+    )
+    response = request.execute()
+
+    video_details = {}
+
+    if response.get('items'):
+        item = response['items'][0]
+        title = item['snippet']['title']
+        like_count = item['statistics'].get('likeCount', 0)
+        view_count = item['statistics'].get('viewCount', 0)
+        comments_count = item['statistics'].get('commentCount', 0)
+
+        video_details = {
+            'title': title,
+            'video_link': f"https://www.youtube.com/watch?v={video_id}",
+            'embed_link': f"https://www.youtube.com/embed/{video_id}",
+            'like_count': like_count,
+            'view_count': view_count,
+            'comments_count': comments_count,
+        }
+
+    return video_details
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
@@ -224,6 +254,25 @@ def caption_summary(video_id):
         summary = generate_summary_audio("outputs/temp_audio.txt")
         video_collection.insert_one({'video_id':video_id, 'audio_video_summary':summary})
         return summary
+
+@app.route("/summary/<string:video_id>/<string:title>", methods=['GET', 'POST'])
+def summary(video_id, title):
+    stop_words = set(stopwords.words('english'))
+    word_tokens = word_tokenize(title)
+    filtered_text = [word for word in word_tokens if word.lower() not in stop_words]
+    
+    new_text = []
+    
+    for i in filtered_text:
+        if i.isalnum():
+            new_text.append(i.lower())
+    
+    recommended_video = search_videos(new_text)
+    video_detail_lst = get_video_details(video_id)
+    
+    del recommended_video[video_id]
+    
+    return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))))
 
 if __name__ == '__main__':  
    app.run(debug = True)
