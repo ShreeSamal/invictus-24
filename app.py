@@ -1,4 +1,4 @@
-from flask import Flask ,render_template, request, redirect
+from flask import Flask ,render_template, request, redirect, url_for, flash,jsonify,session
 import googleapiclient.discovery
 from datetime import datetime, timedelta
 from pymongo.mongo_client import MongoClient
@@ -11,8 +11,11 @@ from video_audio_caption import create_captions,create_captions_audio
 
 from collections import OrderedDict
 from urllib.parse import urlparse, parse_qs
+from flask_bcrypt import Bcrypt
+from functools import wraps
 
-API_KEY_A = 'AIzaSyAjKBo9q945sacH_cR7_wxj8G7T8F3B6p0'
+API_KEY_A = 'AIzaSyB1f-xn81py9UruPLrMnYihldHuhONZU5U'
+# API_KEY_A = 'AIzaSyAjKBo9q945sacH_cR7_wxj8G7T8F3B6p0'
 # API_KEY_A = 'AIzaSyAhd2CrnNgjDMFwSTa1JFz27btz1rv6M24'
 
 youtube_A = googleapiclient.discovery.build('youtube', 'v3', developerKey=API_KEY_A)
@@ -27,6 +30,7 @@ uri = "mongodb+srv://cfrost:P2JVTwefRIFHUWQX@invictus24.ilfsi9p.mongodb.net/?ret
 
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
+bcrypt = Bcrypt(app)
 # Send a ping to confirm a successful connection
 try:
     client.admin.command('ping')
@@ -35,7 +39,17 @@ except Exception as e:
     print(e)
 
 db = client.test
+users = db.users
 video_collection = db.videos
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'invic_email' not in session:
+            # User is not logged in, redirect to login page
+            return redirect(url_for('login_register'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 def get_trending_videos_until_yesterday(max_results=8):
     # Set the publishedAfter and publishedBefore parameters for yesterday
@@ -200,6 +214,36 @@ def get_video_details(video_id):
 
     return video_details
 
+@app.route('/user/login')
+def login_register():
+    return render_template('login_register.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    login_user = users.find_one({'email' : data['email']})
+    if login_user:
+        password = bcrypt.check_password_hash(login_user['password'], data['password'])
+        if password:
+            session['invic_email'] = str(data['email'])
+            return jsonify({'message' : 'success'})
+        else:
+            return jsonify({'message' : 'Invalid Password'})
+    return jsonify({'message' : 'Invalid Email'})
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    hashed = bcrypt.generate_password_hash(data['password'])
+    curr_user = users.find_one({'email' : data['email']})
+    if curr_user:
+        return jsonify({'message' : 'User already exists'})
+    new_user = users.insert_one({'name' : data['name'], 'email' : data['email'], 'password' : hashed,'contact':data['contact']})
+    if(new_user):
+        return jsonify({'message' : 'success'})
+    else: 
+        return jsonify({'message' : 'failure'})
+
 @app.route("/", methods=['GET', 'POST'])
 def home():
     return render_template("index.html", video_details_dict = video_details_dict)
@@ -328,6 +372,23 @@ def summary(video_id, title):
     del recommended_video[video_id]
     
     return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))))
+
+
+
+@app.route('/history', methods=['GET'])
+@login_required 
+def history():
+    return render_template('history.html', name=session['invic_email'])
+
+@app.route('/about', methods=['GET'])
+@login_required 
+def aboutUs():
+    return render_template('aboutUs.html')
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.clear()
+    return redirect("/")
 
 if __name__ == '__main__':  
    app.run(debug = True)
