@@ -8,14 +8,17 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from video_audio_caption import create_captions,create_captions_audio
-
+from nltk.sentiment import SentimentIntensityAnalyzer
 from collections import OrderedDict
 from urllib.parse import urlparse, parse_qs
 from flask_bcrypt import Bcrypt
 from functools import wraps
 
 API_KEY_A = 'AIzaSyB1f-xn81py9UruPLrMnYihldHuhONZU5U'
-# API_KEY_A = 'AIzaSyAjKBo9q945sacH_cR7_wxj8G7T8F3B6p0'
+# sia = SentimentIntensityAnalyzer()
+
+API_KEY_A = "AIzaSyB1f-xn81py9UruPLrMnYihldHuhONZU5U"
+#API_KEY_A = 'AIzaSyAjKBo9q945sacH_cR7_wxj8G7T8F3B6p0'
 # API_KEY_A = 'AIzaSyAhd2CrnNgjDMFwSTa1JFz27btz1rv6M24'
 
 youtube_A = googleapiclient.discovery.build('youtube', 'v3', developerKey=API_KEY_A)
@@ -261,10 +264,18 @@ def trend_summary(video_id):
             new_text.append(i.lower())
     
     recommended_video = search_videos(new_text)
-    
+    video_detail_lst = video_details_dict[video_id]
     del recommended_video[video_id]
-    
-    return render_template("summary_trend.html", video_details_lst = video_details_dict[video_id], recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id)
+    lst = getChartData(video_id)
+    video = video_collection.find_one({'video_id':video_id})
+    if video:
+        if video["audio_video_summary"] != "":
+            return render_template("summary_trend.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_video_summary'],pos=lst[0],neg=lst[1],neu=lst[2])
+        elif video["audio_summary"] != "":
+            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_summary'],pos=lst[0],neg=lst[1],neu=lst[2])
+        else:
+            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2])
+    return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2])
 
 
 
@@ -335,24 +346,34 @@ def caption_summary(video_id):
     print("video_id", video_id)
     video = video_collection.find_one({'video_id':video_id})
     if video:
-        return video['audio_video_summary']
-    else:
-        create_captions("https://www.youtube.com/watch?v="+video_id)
-        summary = generate_summary("outputs/temp_audio.txt", "outputs/temp_video.json")
-        video_collection.insert_one({'video_id':video_id, 'audio_video_summary':summary})
-        return summary
+        if video["audio_video_summary"]!="":
+            return video['audio_video_summary']
+        else:
+            create_captions("https://www.youtube.com/watch?v="+video_id)
+            summary = generate_summary("outputs/temp_audio.txt", "outputs/temp_video.json")
+            video_collection.insert_one({'video_id':video_id, 'audio_video_summary':summary, 'audio_summary':""})
+            return summary
+    create_captions("https://www.youtube.com/watch?v="+video_id)
+    summary = generate_summary("outputs/temp_audio.txt", "outputs/temp_video.json")
+    video_collection.insert_one({'video_id':video_id, 'audio_video_summary':summary, 'audio_summary':""})
+    return summary
     
 @app.route("/caption/summary/audio/<string:video_id>", methods=['GET', 'POST'])
 def caption_summary_audio(video_id):
     print("video_id", video_id)
     video = video_collection.find_one({'video_id':video_id})
     if video:
-        return video['audio_summary']
-    else:
-        create_captions_audio("https://www.youtube.com/watch?v="+video_id)
-        summary = generate_summary_audio("outputs/temp_audio.txt")
-        video_collection.insert_one({'video_id':video_id, 'audio_summary':summary})
-        return summary
+        if video["audio_summary"]!="":
+            return video['audio_summary']
+        else:
+            create_captions_audio("https://www.youtube.com/watch?v="+video_id)
+            summary = generate_summary_audio("outputs/temp_audio.txt")
+            video_collection.insert_one({'video_id':video_id, 'audio_summary':summary,'audio_video_summary':""})
+            return summary
+    create_captions_audio("https://www.youtube.com/watch?v="+video_id)
+    summary = generate_summary_audio("outputs/temp_audio.txt")
+    video_collection.insert_one({'video_id':video_id, 'audio_summary':summary,'audio_video_summary':""})
+    return summary
 
 @app.route("/summary/<string:video_id>/<string:title>", methods=['GET', 'POST'])
 def summary(video_id, title):
@@ -368,27 +389,57 @@ def summary(video_id, title):
     
     recommended_video = search_videos(new_text)
     video_detail_lst = get_video_details(video_id)
-    
+    lst = getChartData(video_id)
     del recommended_video[video_id]
-    
-    return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))))
+    video = video_collection.find_one({'video_id':video_id})
+    if video:
+        if video["audio_video_summary"] != "":
+            return render_template("summary_trend.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_video_summary'],pos=lst[0],neg=lst[1],neu=lst[2])
+        elif video["audio_summary"] != "":
+            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_summary'],pos=lst[0],neg=lst[1],neu=lst[2])
+        else:
+            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2])
+    return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2])
 
+def getChartData(video_id):
+    request = youtube_A.commentThreads().list(part="snippet",videoId=video_id)
 
+    comments = []
+    likes = []
+    response = request.execute()
 
-@app.route('/history', methods=['GET'])
-@login_required 
-def history():
-    return render_template('history.html', name=session['invic_email'])
+    for item in response['items']:
+        com = item['snippet']['topLevelComment']['snippet']
+        comments.append(com['textOriginal'])
+        likes.append(com['likeCount']+1)
 
-@app.route('/about', methods=['GET'])
-@login_required 
-def aboutUs():
-    return render_template('aboutUs.html')
+    while (True):
+        try:
+            nextPageToken = response['nextPageToken']
+        except KeyError:
+            break
+        nextPageToken = response['nextPageToken']
+        nextRequest = youtube_A.commentThreads().list(part="snippet", videoId=video_id, pageToken=nextPageToken)
+        response = nextRequest.execute()
 
-@app.route('/logout', methods=['GET', 'POST'])
-def logout():
-    session.clear()
-    return redirect("/")
+        for item in response['items']:
+            com = item['snippet']['topLevelComment']['snippet']
+            comments.append(com['textOriginal'])
+            likes.append(com['likeCount']+1)
+
+    pos = 0
+    neg = 0
+    neu = 0
+    total = len(comments)
+    for i in comments:
+        score = sia.polarity_scores(i)['compound']
+        if score > 0 :
+            pos += 1
+        elif score < 0:
+            neg += 1
+        else:
+            neu += 1
+    return [int(100* pos//total), int(100* neg//total), int(100* neu//total)]
 
 if __name__ == '__main__':  
    app.run(debug = True)

@@ -105,13 +105,13 @@
                                         </select>
                                     </div>
                                     <div style="margin-top: 15px; width: 100%; ">
-                                        <a href="/summary/rapid" class="summary-button"
+                                        <a id="rapid-summary" href="#" class="summary-button"
                                             style="display: flex; justify-content: center; font-size: 1.1em; padding: 5px 20px; background: yellow; color: black; font-weight: 600; border-radius: 5px;">
                                             Rapid Summary
                                         </a>
                                     </div>
                                     <div style="margin-top: 15px; width: 100%; ">
-                                        <a href="/summary/detailed" class="summary-button"
+                                        <a id="detailed-summary" href="#" class="summary-button"
                                             style="display: flex; justify-content: center; font-size: 1.1em; padding: 5px 20px; background: yellow; color: black; font-weight: 600; border-radius: 5px;">
                                             Detailed Summary
                                         </a>
@@ -208,7 +208,7 @@
                                     <div class="text-box"
                                         style=" width: 100%; background-color: #1B1B1B; padding: 20px 14px; height: auto; border-radius: 6px;">
                                         <textarea readonly id="message" rows="12"
-                                            style="width: 100%; background: transparent; color: white; border: none; height: 100%; ">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ad quod dolor, ullam quam veniam dolorem pariatur hic doloribus dolores, inventore officia minus fugiat similique suscipit, fuga explicabo. Iste, praesentium perspiciatis.</textarea>
+                                            style="width: 100%; background: transparent; color: white; border: none; height: 100%; ">{{summary}} </textarea>
                                     </div>
                                     <div style="width:'fit-content'; display: flex; justify-content: 'start';">
                                         <a id="speak" href="#" class="waves-effect waves-light btn"
@@ -300,9 +300,9 @@
             innerRadius: "70%",
             indexLabelFontColor: "white",
             dataPoints: [
-              { y: 10, indexLabel: "Neutral" },
-              { y: 50, indexLabel: "Negative" },
-              { y: 40, indexLabel: "Positive" },
+              { y: "{{pos}}", indexLabel: "Neutral" },
+              { y: "{{neg}}", indexLabel: "Negative" },
+              { y: "{{neu}}", indexLabel: "Positive" },
             ],
           },
         ],
@@ -315,6 +315,28 @@
     type="text/javascript"
     src="https://cdn.canvasjs.com/canvasjs.min.js"
   ></script>
-  
+<script>
+    $("#rapid-summary").click(function () {
+        $("#message").val("Generating Summary...");
+        fetch("/caption/summary/audio/{{video_id}}", {
+            method: "GET",
+        })
+            .then((response) => response.text())
+            .then((data) => {
+                $("#message").val(data);
+            });
+    })
+
+    $("#detailed-summary").click(function () {
+        $("#message").val("Generating Summary...");
+        fetch("/caption/summary/audio_video/{{video_id}}", {
+            method: "GET",
+        })
+            .then((response) => response.text())
+            .then((data) => {
+                $("#message").val(data);
+            });
+    })
+</script>
 <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 {% endblock body %}
