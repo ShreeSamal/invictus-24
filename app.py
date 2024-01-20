@@ -3,11 +3,11 @@ import googleapiclient.discovery
 from datetime import datetime, timedelta
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-
+from getSummary import generate_summary,generate_summary_audio
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-
+from video_audio_caption import create_captions,create_captions_audio
 
 from collections import OrderedDict
 
@@ -219,7 +219,7 @@ def trend_summary(video_id):
     
     del recommended_video[video_id]
     
-    return render_template("summary_trend.html", video_details_lst = video_details_dict[video_id], recommended_video = OrderedDict(reversed(list(recommended_video.items()))))
+    return render_template("summary_trend.html", video_details_lst = video_details_dict[video_id], recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id)
 
 @app.route("/search/results", methods=['GET', 'POST'])
 def serach_results():
@@ -231,22 +231,29 @@ def serach_results():
         search_video_dict = search_videos_top_10(keyword)
         return render_template("search_result.html", search_video_dict = search_video_dict)
 
-@app.route("/caption/summary/<string:video_id>", methods=['GET', 'POST'])
+@app.route("/caption/summary/audio_video/<string:video_id>", methods=['GET', 'POST'])
 def caption_summary(video_id):
-    if request.method == 'POST':
-        data = request.get_json()
-        video = video_collection.find_one({'video_id':video_id})
-        if video:
-            return video['summary']
-        else:
-            video = video_collection.insert_one({'video_id':video_id, 'summary':data['summary']})
-            return video['summary']
+    print("video_id", video_id)
+    video = video_collection.find_one({'video_id':video_id})
+    if video:
+        return video['audio_video_summary']
     else:
-        video = video_collection.find_one({'video_id':video_id})
-        if video:
-            return video['summary']
-        else:
-            return ""
+        create_captions("https://www.youtube.com/watch?v="+video_id)
+        summary = generate_summary("outputs/temp_audio.txt", "outputs/temp_video.json")
+        video_collection.insert_one({'video_id':video_id, 'audio_video_summary':summary})
+        return summary
+    
+@app.route("/caption/summary/audio/<string:video_id>", methods=['GET', 'POST'])
+def caption_summary(video_id):
+    print("video_id", video_id)
+    video = video_collection.find_one({'video_id':video_id})
+    if video:
+        return video['audio_summary']
+    else:
+        create_captions_audio("https://www.youtube.com/watch?v="+video_id)
+        summary = generate_summary_audio("outputs/temp_audio.txt")
+        video_collection.insert_one({'video_id':video_id, 'audio_video_summary':summary})
+        return summary
 
 @app.route("/summary/<string:video_id>/<string:title>", methods=['GET', 'POST'])
 def summary(video_id, title):

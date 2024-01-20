@@ -1,1 +1,5 @@
 env
+saved_models
+inputs
+outputs
+saved_vocabulary

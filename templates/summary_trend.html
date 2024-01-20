@@ -1,6 +1,16 @@
 {% extends "layout.html" %}
 
 {% block body %}
+<div id="js-preloader" class="js-preloader">
+    <div class="preloader-inner">
+      <span class="dot"></span>
+      <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
 <style>
     .canvasjs-chart-credit{
         display: none;
@@ -179,7 +189,7 @@
                                     <div class="text-box"
                                         style=" width: 800px; background-color: #1B1B1B; padding: 20px 14px; height: auto; border-radius: 6px;">
                                         <textarea readonly id="message" rows="12"
-                                            style="width: 100%; background: transparent; color: white; border: none; height: 100%; ">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ad quod dolor, ullam quam veniam dolorem pariatur hic doloribus dolores, inventore officia minus fugiat similique suscipit, fuga explicabo. Iste, praesentium perspiciatis.</textarea>
+                                            style="width: 100%; background: transparent; color: white; border: none; height: 100%; ">Generating Summary...</textarea>
                                     </div>
                                     <div style="width:'fit-content'; display: flex; justify-content: 'start';">
                                         <a id="speak" href="#" class="waves-effect waves-light btn"
@@ -281,6 +291,25 @@
   
       chart.render();
     };
+</script>
+<script>
+    $(document).ready(function () {
+        $("#js-preloader").removeClass('loaded');
+        var msg = null;
+        fetch('/caption/summary/audio_video/{{video_id}}')
+        .then(response => response.text())
+        .then(data => {
+            $("#js-preloader").addClass('loaded');
+            $('#message').val(data);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            $("#js-preloader").addClass('loaded');
+        });
+    });
+</script>
+<script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
   </script>
   <script
     type="text/javascript"
