@@ -244,7 +244,7 @@ def caption_summary(video_id):
         return summary
     
 @app.route("/caption/summary/audio/<string:video_id>", methods=['GET', 'POST'])
-def caption_summary(video_id):
+def caption_summary_audio(video_id):
     print("video_id", video_id)
     video = video_collection.find_one({'video_id':video_id})
     if video:
@@ -252,7 +252,7 @@ def caption_summary(video_id):
     else:
         create_captions_audio("https://www.youtube.com/watch?v="+video_id)
         summary = generate_summary_audio("outputs/temp_audio.txt")
-        video_collection.insert_one({'video_id':video_id, 'audio_video_summary':summary})
+        video_collection.insert_one({'video_id':video_id, 'audio_summary':summary})
         return summary
 
 @app.route("/summary/<string:video_id>/<string:title>", methods=['GET', 'POST'])
