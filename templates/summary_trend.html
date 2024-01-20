@@ -1,0 +1,196 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="page-content">
+
+                <!-- ***** Featured Games Start ***** -->
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="featured-games header-text">
+                            <div class="heading-section">
+                                <h4><em>Summary</em> of the Video</h4>
+                            </div>
+                            <div class="youtube-video">
+                                <iframe style="border-radius: 7px;" width="100%" height="400px"
+                                    src="{{video_details_lst['embed_link']}}" frameborder="0">
+                                </iframe>
+                            </div>
+                            <p class="video-title"
+                                style="color: white; font-size: 1.7em; font-weight: 600; margin-top: 16px">
+                                {{video_details_lst['title']}}
+                            </p>
+                            <ul class="like_view"
+                                style="margin-top: 10px; float: none; display: flex; gap: 40px; color: white; font-size: 1.2em">
+
+                                {% if video_details_lst['view_count']|length < 4 %} {% set view_count=video_details_lst['view_count'] %} <li><i
+                                        class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}</li>
+                                    {% elif 6 > video_details_lst['view_count']|length > 3 %}
+                                    {% set view_count = video_details_lst['view_count'][:video_details_lst['view_count']|length-3] + " K+"%}
+                                    <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}</li>
+                                    {% else %}
+                                    {% set view_count = video_details_lst['view_count'][:video_details_lst['view_count']|length-5] + " L+"%}
+
+                                    <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}</li>
+
+                                {% endif %}
+
+                                {% if video_details_lst['like_count']|length < 4 %} {% set like_count=video_details_lst['like_count'] %}
+                                    <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{ like_count }}</li>
+                                    {% elif 6 > video_details_lst['like_count']|length > 3 %}
+                                    {% set like_count = video_details_lst['like_count'][:video_details_lst['like_count']|length-3] + " K+"%}
+                                    <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{ like_count }}</li>
+                                    {% else %}
+                                    {% set like_count = video_details_lst['like_count'][:video_details_lst['like_count']|length-5] + " L+"%}
+
+                                    <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> {{ like_count }}</li>
+
+                                {% endif %}
+                                        
+                                {% if video_details_lst['comments_count'] == 0 %}
+                                <li><i class="fa-solid fa-message" style="color: purple;"></i></i> Not Available</li>
+                                {% elif video_details_lst['comments_count']|length < 4 %} {% set comments_count=video_details_lst['comments_count'] %}
+                                    <li><i class="fa-solid fa-message" style="color: purple;"></i> {{ comments_count }}</li>
+                                    {% elif 6 > video_details_lst['comments_count']|length > 3 %}
+                                    {% set comments_count = video_details_lst['comments_count'][:video_details_lst['comments_count']|length-3] + " K+"%}
+                                    <li><i class="fa-solid fa-message" style="color: purple;"></i></i> {{ comments_count }}</li>
+                                    {% else %}
+                                    {% set comments_count = video_details_lst['comments_count'][:video_details_lst['comments_count']|length-5] + " L+"%}
+
+                                    <li><i class="fa-solid fa-message" style="color: purple;"></i></i> {{ comments_count }}</li>
+
+                                {% endif %}
+                                
+
+                            </ul>
+
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="top-downloaded" style="height: 100%;">
+                            <div class="heading-section">
+                                <h4><em>Similar</em> Videos</h4>
+                            </div>
+                            <ul style="height: 480px; overflow: auto">
+                                
+                                <li>
+                                    {% for key, value in recommended_video.items() %}
+                                    <iframe style="border-radius: 7px;" width="100%" src="{{value['embed_link']}}" frameborder="0">
+                                    </iframe>
+                                    <p class="vid-download-title" style="margin-top: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+                                    text-overflow: ellipsis; line-clamp: 2;">{{value['title']}}
+                                    </p>
+
+                                    <ul class="like_view" style="margin-top: 10px; float: none; display: flex; justify-content: space-between; color: white;">
+                                            
+                                        {% if value['view_count']|length < 4 %}
+                                        {% set view_count = value['view_count'] %}
+                                        <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}</li>
+                                        {% elif 6 > value['view_count']|length > 3 %}
+                                        {% set view_count = value['view_count'][:value['view_count']|length-3] + " K+"%}
+                                        <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}</li>
+                                        {% else %}
+                                        {% set view_count = value['view_count'][:value['view_count']|length-5] + " L+"%}
+
+                                        <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}</li>
+
+                                        {% endif %}
+
+                                        {% if value['like_count']|length < 4 %}
+                                        {% set like_count = value['like_count'] %}
+                                        <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{ like_count }}</li>
+                                        {% elif 6 > value['like_count']|length > 3 %}
+                                        {% set like_count = value['like_count'][:value['like_count']|length-3] + " K+"%}
+                                        <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{ like_count }}</li>
+                                        {% else %}
+                                        {% set like_count = value['like_count'][:value['like_count']|length-5] + " L+"%}
+
+                                        <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> {{ like_count }}</li>
+                                        
+                                        {% endif %}
+                                    </ul>
+                                    <div style="margin-top: 10px;">
+                                        <a href="/trending/summary/{{key}}" class="summary-button" style="font-size: 0.8em; padding: 3px 15px; background: yellow; color: black; font-weight: 600; border-radius: 5px;">
+                                            See Summary
+                                        </a>
+                                    </div>
+
+                                    <hr width="100%" style="color: white;">
+                                    {% endfor %}
+
+                                    
+                                </li>
+                                
+
+
+
+                            </ul>
+                            <!-- <div class="text-button">
+                                <a href="profile.html">View All Games</a>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- ***** Featured Games End ***** -->
+
+                <!-- ***** Start Stream Start ***** -->
+                <div class="start-stream">
+                    <div class="col-lg-12">
+                        <div class="heading-section">
+                            <h4>Summary</h4>
+                            <div class="text-box" style="background-color: #1B1B1B; padding: 20px 14px; height: auto; border-radius: 6px;">
+                                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ad quod dolor, ullam quam veniam dolorem pariatur hic doloribus dolores, inventore officia minus fugiat similique suscipit, fuga explicabo. Iste, praesentium perspiciatis.</p>
+                            </div>
+
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col-lg-4">
+                                <div class="item">
+                                    <div class="icon">
+                                        <img src="assets/images/service-01.jpg" alt=""
+                                            style="max-width: 60px; border-radius: 50%;">
+                                    </div>
+                                    <h4>Go To Your Profile</h4>
+                                    <p>Cyborg Gaming is free HTML CSS website template provided by TemplateMo. This is
+                                        Bootstrap v5.2.0 layout.</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="item">
+                                    <div class="icon">
+                                        <img src="assets/images/service-02.jpg" alt=""
+                                            style="max-width: 60px; border-radius: 50%;">
+                                    </div>
+                                    <h4>Live Stream Button</h4>
+                                    <p>If you wish to support us, you can make a <a href="https://paypal.me/templatemo"
+                                            target="_blank">small contribution via PayPal</a> to info [at]
+                                        templatemo.com</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="item">
+                                    <div class="icon">
+                                        <img src="assets/images/service-03.jpg" alt=""
+                                            style="max-width: 60px; border-radius: 50%;">
+                                    </div>
+                                    <h4>You Are Live</h4>
+                                    <p>You are not allowed to redistribute this template's downloadable ZIP file on any
+                                        other template collection website.</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="main-button">
+                                    <a href="profile.html">Go To Profile</a>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+                <!-- ***** Start Stream End ***** -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
