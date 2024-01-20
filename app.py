@@ -14,10 +14,10 @@ from urllib.parse import urlparse, parse_qs
 from flask_bcrypt import Bcrypt
 from functools import wraps
 
-API_KEY_A = 'AIzaSyB1f-xn81py9UruPLrMnYihldHuhONZU5U'
-# sia = SentimentIntensityAnalyzer()
+sia = SentimentIntensityAnalyzer()
 
-API_KEY_A = "AIzaSyB1f-xn81py9UruPLrMnYihldHuhONZU5U"
+API_KEY_A = 'AIzaSyBbPQO0_-vLPU8kvgYbPbPlvzxKS0o4sUk'
+# API_KEY_A = "AIzaSyB1f-xn81py9UruPLrMnYihldHuhONZU5U"
 #API_KEY_A = 'AIzaSyAjKBo9q945sacH_cR7_wxj8G7T8F3B6p0'
 # API_KEY_A = 'AIzaSyAhd2CrnNgjDMFwSTa1JFz27btz1rv6M24'
 
@@ -253,6 +253,15 @@ def home():
 
 @app.route("/trending/summary/<string:video_id>", methods=['GET', 'POST'])
 def trend_summary(video_id):
+    user = users.find_one({'email': session['invic_email']})
+
+    if user:
+
+        # Update the 'visited' field by appending the new 'video_id' to the list
+        users.update_one(
+            {'email': session['invic_email']},
+            {'$push': {'visited': video_id}}
+        )
     stop_words = set(stopwords.words('english'))
     word_tokens = word_tokenize(video_details_dict[video_id]['title'])
     filtered_text = [word for word in word_tokens if word.lower() not in stop_words]
@@ -265,7 +274,8 @@ def trend_summary(video_id):
     
     recommended_video = search_videos(new_text)
     video_detail_lst = video_details_dict[video_id]
-    del recommended_video[video_id]
+    # if (recommended_video[video_id]):
+    #     del recommended_video[video_id]
     lst = getChartData(video_id)
     video = video_collection.find_one({'video_id':video_id})
     if video:
@@ -377,6 +387,15 @@ def caption_summary_audio(video_id):
 
 @app.route("/summary/<string:video_id>/<string:title>", methods=['GET', 'POST'])
 def summary(video_id, title):
+    user = users.find_one({'email': session['invic_email']})
+
+    if user:
+
+        # Update the 'visited' field by appending the new 'video_id' to the list
+        users.update_one(
+            {'email': session['invic_email']},
+            {'$push': {'visited': video_id}}
+        )
     stop_words = set(stopwords.words('english'))
     word_tokens = word_tokenize(title)
     filtered_text = [word for word in word_tokens if word.lower() not in stop_words]
@@ -390,7 +409,8 @@ def summary(video_id, title):
     recommended_video = search_videos(new_text)
     video_detail_lst = get_video_details(video_id)
     lst = getChartData(video_id)
-    del recommended_video[video_id]
+    # if (recommended_video[video_id]):
+    #     del recommended_video[video_id]
     video = video_collection.find_one({'video_id':video_id})
     if video:
         if video["audio_video_summary"] != "":
@@ -440,6 +460,29 @@ def getChartData(video_id):
         else:
             neu += 1
     return [int(100* pos//total), int(100* neg//total), int(100* neu//total)]
+
+@app.route('/history', methods=['GET'])
+@login_required 
+def history():
+    visited_links = {}
+    user = users.find_one({'email': session['invic_email']})
+    if user:
+        user_visited_route = user['visited']
+        user_visited_route_set = list(set(user_visited_route))
+        
+        for item in user_visited_route_set:
+            visited_links[item] = get_video_details_link(item)
+            
+    return render_template('history.html', name=session['invic_email'], search_video_dict = visited_links)
+
+@app.route('/about', methods=['GET'])
+def aboutUs():
+    return render_template('aboutUs.html')
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.clear()
+    return redirect("/")
 
 if __name__ == '__main__':  
    app.run(debug = True)
