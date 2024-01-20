@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<style>
+    .video-search{
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .search-results-details{
+        width: 60%;
+    }
+    .summary-button-wrap{
+        width: 13%;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="page-content">
+                <!-- ***** Other Start ***** -->
+                <div class="other-games">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="heading-section">
+                                <h4><em>History</em> of {{ name }}</h4>
+                            </div>
+                        </div>
+                        {% for key, value in search_video_dict.items() %}
+                        <div class="col-lg-12">
+                            <div class="item video-search">
+                                <iframe style="border-radius: 7px;" width="22%" src="{{value['embed_link']}}" frameborder="0">
+                                </iframe>
+                                <div class="search-results-details" style="display: flex; flex-direction: column">
+                                    <h4 style="font-size: 1.7em;">{{value['title']}}</h4>
+                                    <div class="like_view"
+                                        style="margin-top: 5px; float: none; display: flex; gap:50px; color: white;">
+                                        {% if value['view_count']|length < 4 %} {% set
+                                            view_count=value['view_count'] %} <li><i class="fa-solid fa-eye"
+                                                style="color: yellow;"></i> &nbsp;{{ view_count }}</li>
+                                            {% elif 6 > value['view_count']|length > 3 %}
+                                            {% set view_count =
+                                            value['view_count'][:value['view_count']|length-3] + " K+"%}
+                                            <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}
+                                            </li>
+                                            {% else %}
+                                            {% set view_count =
+                                            value['view_count'][:value['view_count']|length-5] + " L+"%}
+        
+                                            <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}
+                                            </li>
+        
+                                            {% endif %}
+        
+                                            {% if value['like_count']|length < 4 %} {% set
+                                                like_count=value['like_count'] %} <li><i
+                                                    class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{
+                                                like_count }}</li>
+                                                {% elif 6 > value['like_count']|length > 3 %}
+                                                {% set like_count =
+                                                value['like_count'][:value['like_count']|length-3] + "
+                                                K+"%}
+                                                <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{
+                                                    like_count }}</li>
+                                                {% else %}
+                                                {% set like_count =
+                                                value['like_count'][:value['like_count']|length-5] + "
+                                                L+"%}
+        
+                                                <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> {{
+                                                    like_count }}</li>
+        
+                                                {% endif %}
+        
+                                                {% if value['comments_count'] == 0 %}
+                                                <li><i class="fa-solid fa-message" style="color: purple;"></i></i> Not Available
+                                                </li>
+                                                {% elif value['comments_count']|length < 4 %} {% set
+                                                    comments_count=value['comments_count'] %} <li><i
+                                                        class="fa-solid fa-message" style="color: purple;"></i> {{
+                                                    comments_count }}</li>
+                                                    {% elif 6 > value['comments_count']|length > 3 %}
+                                                    {% set comments_count =
+                                                    value['comments_count'][:value['comments_count']|length-3]
+                                                    + " K+"%}
+                                                    <li><i class="fa-solid fa-message" style="color: purple;"></i></i> {{
+                                                        comments_count }}</li>
+                                                    {% else %}
+                                                    {% set comments_count =
+                                                    value['comments_count'][:value['comments_count']|length-5]
+                                                    + " L+"%}
+        
+                                                    <li><i class="fa-solid fa-message" style="color: purple;"></i></i> {{
+                                                        comments_count }}</li>
+        
+                                                    {% endif %}
+        
+                                    </div>
+                                </div>
+                                <div class="summary-button-wrap">
+                                    <a href="/summary/{{key}}//{{value['title']}}" class="summary-button" style="font-size: 0.9em; padding: 6px 20px; background: yellow; color: black; font-weight: 600; border-radius: 5px;">
+                                        See Summary
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- ***** Other End ***** -->
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

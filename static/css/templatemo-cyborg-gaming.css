@@ -50,6 +50,13 @@ figure, header, nav, section, article, aside, footer, figcaption {
   height: 0;
 }
 
+.about-item{
+  /* border: 2px solid red; */
+  padding: 10px;
+  margin-left: 10px;
+  border-left: 0.5px solid #464646;
+}
+
 .clearfix {
   display: inline-block;
 }
