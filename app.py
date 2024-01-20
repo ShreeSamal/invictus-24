@@ -10,6 +10,7 @@ from nltk.corpus import stopwords
 from video_audio_caption import create_captions,create_captions_audio
 
 from collections import OrderedDict
+from urllib.parse import urlparse, parse_qs
 
 API_KEY_A = 'AIzaSyAjKBo9q945sacH_cR7_wxj8G7T8F3B6p0'
 # API_KEY_A = 'AIzaSyAhd2CrnNgjDMFwSTa1JFz27btz1rv6M24'
@@ -221,12 +222,66 @@ def trend_summary(video_id):
     
     return render_template("summary_trend.html", video_details_lst = video_details_dict[video_id], recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id)
 
+
+
+def get_video_id_from_url(youtube_url):
+    # Parse video ID from YouTube URL
+    parsed_url = urlparse(youtube_url)
+    query_params = parse_qs(parsed_url.query)
+    video_id = query_params.get('v', [None])[0]
+    if not video_id:
+        # Try to extract video ID from the path (for youtu.be links)
+        path_segments = parsed_url.path.split('/')
+        video_id = path_segments[-1]
+    return video_id
+
+def get_video_details_link(video_id):
+    # Get video details using API call
+    request = youtube_A.videos().list(
+        part='snippet,statistics',
+        id=video_id
+    )
+    response = request.execute()
+
+    video_details = {}
+
+    if response.get('items'):
+        item = response['items'][0]
+        title = item['snippet']['title']
+        like_count = item['statistics'].get('likeCount', 0)
+        view_count = item['statistics'].get('viewCount', 0)
+        comments_count = item['statistics'].get('commentCount', 0)
+
+        video_details = {
+            'title': title,
+            'video_id': video_id,
+            'video_link': f"https://www.youtube.com/watch?v={video_id}",
+            'embed_link': f"https://www.youtube.com/embed/{video_id}",
+            'like_count': like_count,
+            'view_count': view_count,
+            'comments_count': comments_count,
+        }
+
+    return video_details
+
+def get_video_details_from_url(youtube_url):
+    video_id = get_video_id_from_url(youtube_url)
+
+    if video_id:
+        return get_video_details_link(video_id)
+    else:
+        return None
+
+
+
 @app.route("/search/results", methods=['GET', 'POST'])
 def serach_results():
     keyword = request.form.get("searchKeyword")
     
-    if("www.youtube.com" in keyword):
-        return redirect("/")
+    if("https://" in keyword):
+        video_details_from_url = get_video_details_from_url(keyword)
+        
+        return redirect("/summary/" + video_details_from_url['video_id'] + "/" + video_details_from_url['title'])
     else:
         search_video_dict = search_videos_top_10(keyword)
         return render_template("search_result.html", search_video_dict = search_video_dict)
