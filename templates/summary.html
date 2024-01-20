@@ -253,31 +253,34 @@
 
 <script type="text/javascript">
     window.onload = function () {
-        var chart = new CanvasJS.Chart("chartContainer", {
-            title: {
-                text: "Distribution of Comments in %",
-                fontColor: "white",
-                fontWeight: "lighter",
-            },
-            backgroundColor: "#1B1B1B", // Set chart background to transparent
-            data: [
-                {
-                    type: "doughnut",
-                    innerRadius: "60%",
-                    indexLabelFontColor: "white",
-                    dataPoints: [
-                        { y: 10, indexLabel: "Neutral" },
-                        { y: 50, indexLabel: "Negative" },
-                        { y: 40, indexLabel: "Positive" },
-                    ],
-                },
+      var chart = new CanvasJS.Chart("chartContainer", {
+        title: {
+          text: "Distribution of Comments in %",
+          fontColor: "white",
+          fontWeight: "lighter",
+        },
+        backgroundColor: "#1B1B1B", // Set chart background to transparent
+        data: [
+          {
+            type: "doughnut",
+            innerRadius: "60%",
+            indexLabelFontColor: "white",
+            dataPoints: [
+              { y: 10, indexLabel: "Neutral" },
+              { y: 50, indexLabel: "Negative" },
+              { y: 40, indexLabel: "Positive" },
             ],
-        });
-
-        chart.render();
+          },
+        ],
+      });
+  
+      chart.render();
     };
-</script>
-<script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
-
+  </script>
+  <script
+    type="text/javascript"
+    src="https://cdn.canvasjs.com/canvasjs.min.js"
+  ></script>
+  
 <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 {% endblock body %}

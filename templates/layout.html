@@ -32,20 +32,24 @@
                         </a>
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Search End ***** -->
-                        <div class="search-input">
-                            <form id="search" action="#">
+                        <div class="search-input" style="display: flex; justify-content: space-between; align-items: center;">
+                            <form id="search" action="/search/results" style="flex-grow: 2; display: flex" method="post">
                                 <input type="text" placeholder="Type Something" id="searchText" name="searchKeyword"
                                     onkeypress="handle" />
                                 <i class="fa-solid fa-magnifying-glass"></i>
+                                <button type="submit" class="search-btn" style="height: 46px; border: none; padding: 8px; border-top-right-radius: 23px; border-bottom-right-radius: 23px; background-color: #27292a;">🔎</button>
                             </form>
                         </div>
                         <!-- ***** Search End ***** -->
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
-                            <li><a href="index.html" class="active">Home</a></li>
-                            <li><a href="browse.html">Browse</a></li>
+                            <li><a href="/" class="active">Home</a></li>
+                            <li><a href="browse.html">History</a></li>
+                            <li><a href="browse.html">About Us</a></li>
+                            <li><a href="browse.html">Contact Us</a></li>
+                            <!-- <li><a href="browse.html">Browse</a></li>
                             <li><a href="details.html">Details</a></li>
-                            <li><a href="streams.html">Streams</a></li>
+                            <li><a href="streams.html">Streams</a></li> -->
                             <li>
                                 <a href="profile.html">Profile
                                     <img src="{{url_for('static', filename = 'assets/images/profile-header.jpg')}}"
@@ -93,6 +97,7 @@
     <script src="{{url_for('static', filename = 'js/tabs.js')}}"></script>
     <script src="{{url_for('static', filename = 'js/popup.js')}}"></script>
     <script src="{{url_for('static', filename = 'js/custom.js')}}"></script>
+
 </body>
 
 </html>

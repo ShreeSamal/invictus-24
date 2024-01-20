@@ -227,6 +227,14 @@ section {
   text-decoration: underline;
 }
 
+/* .read-aloud-btn:active {
+  background-color: #050545;
+}
+
+.read-aloud-btn:hover {
+  background-color: #44449b;
+} */
+
 /* 
 ---------------------------------------------
 Pre-loader Style
@@ -389,7 +397,9 @@ Header Style
   background-color: #27292a;
   width: 100%;
   height: 46px;
-  border-radius: 23px;
+  /* border-radius: 23px; */
+  border-top-left-radius: 23px;
+  border-bottom-left-radius: 23px;
   border: none;
   color: #666;
   font-size: 14px;
@@ -1086,7 +1096,7 @@ Featured Games Style
 .top-downloaded {
   border-radius: 23px;
   background-color: #1f2122;
-  padding: 30px;
+  padding: 30px 20px;
   /* max-height: 567px; */
   /* min-height: 567px; */
 }
@@ -1440,7 +1450,6 @@ Other Related Style
   border-radius: 23px;
   padding: 30px 30px 0px 30px;
   background-color: #1f2122;
-  margin-top: 60px;
 }
 
 .other-games .item {
