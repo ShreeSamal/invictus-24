@@ -1,4 +1,4 @@
-from flask import Flask ,render_template, request
+from flask import Flask ,render_template, request, redirect
 import googleapiclient.discovery
 from datetime import datetime, timedelta
 from pymongo.mongo_client import MongoClient
@@ -8,7 +8,12 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
-API_KEY_A = 'AIzaSyAhd2CrnNgjDMFwSTa1JFz27btz1rv6M24'
+
+from collections import OrderedDict
+
+API_KEY_A = 'AIzaSyAjKBo9q945sacH_cR7_wxj8G7T8F3B6p0'
+# API_KEY_A = 'AIzaSyAhd2CrnNgjDMFwSTa1JFz27btz1rv6M24'
+
 youtube_A = googleapiclient.discovery.build('youtube', 'v3', developerKey=API_KEY_A)
 
 local_server = True
@@ -120,6 +125,50 @@ def search_videos(query, max_results=6):
 
     return video_details_dict
 
+def search_videos_top_10(query, max_results=10):
+    request = youtube_A.search().list(
+        q=query,
+        part='snippet',
+        type='video',
+        maxResults=max_results,
+        order='viewCount'  # Sort by view count in descending order
+    )
+    response = request.execute()
+
+    video_details_dict = {}
+
+    for item in response.get('items', []):
+        video_id = item['id']['videoId']
+        title = item['snippet']['title']
+
+        # Get video statistics using another API call
+        stats_request = youtube_A.videos().list(
+            part='statistics',
+            id=video_id
+        )
+        stats_response = stats_request.execute()
+
+        if stats_response.get('items'):
+            statistics = stats_response['items'][0]['statistics']
+            like_count = statistics.get('likeCount', 0)
+            view_count = statistics.get('viewCount', 0)
+            comments_count = statistics.get('commentCount', 0)
+        else:
+            like_count = 0
+            view_count = 0
+            comments_count = 0
+
+        video_details_dict[video_id] = {
+            'title': title,
+            'video_link': f"https://www.youtube.com/watch?v={video_id}",
+            'embed_link': f"https://www.youtube.com/embed/{video_id}",
+            'like_count': like_count,
+            'view_count': view_count,
+            'comments_count': comments_count,
+        }
+
+    return video_details_dict
+
 @app.route("/", methods=['GET', 'POST'])
 def home():
     return render_template("index.html", video_details_dict = video_details_dict)
@@ -140,7 +189,17 @@ def trend_summary(video_id):
     
     del recommended_video[video_id]
     
-    return render_template("summary_trend.html", video_details_lst = video_details_dict[video_id], recommended_video = recommended_video)
+    return render_template("summary_trend.html", video_details_lst = video_details_dict[video_id], recommended_video = OrderedDict(reversed(list(recommended_video.items()))))
+
+@app.route("/search/results", methods=['GET', 'POST'])
+def serach_results():
+    keyword = request.form.get("searchKeyword")
+    
+    if("www.youtube.com" in keyword):
+        return redirect("/")
+    else:
+        search_video_dict = search_videos_top_10(keyword)
+        return render_template("search_result.html", search_video_dict = search_video_dict)
 
 @app.route("/caption/summary/<string:video_id>", methods=['GET', 'POST'])
 def caption_summary(video_id):
