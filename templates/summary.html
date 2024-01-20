@@ -1,6 +1,11 @@
 {% extends "layout.html" %}
 
 {% block body %}
+<style>
+    .canvasjs-chart-credit{
+        display: none;
+    }
+</style>
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
@@ -22,71 +27,100 @@
                                 style="color: white; font-size: 1.7em; font-weight: 600; margin-top: 16px">
                                 {{video_details_lst['title']}}
                             </p>
-                            <ul class="like_view"
-                                style="margin-top: 10px; float: none; display: flex; gap: 40px; color: white; font-size: 1.2em">
-
-                                {% if video_details_lst['view_count']|length < 4 %} {% set
-                                    view_count=video_details_lst['view_count'] %} <li><i class="fa-solid fa-eye"
-                                        style="color: yellow;"></i> &nbsp;{{ view_count }}</li>
-                                    {% elif 6 > video_details_lst['view_count']|length > 3 %}
-                                    {% set view_count =
-                                    video_details_lst['view_count'][:video_details_lst['view_count']|length-3] + " K+"%}
-                                    <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}
-                                    </li>
-                                    {% else %}
-                                    {% set view_count =
-                                    video_details_lst['view_count'][:video_details_lst['view_count']|length-5] + " L+"%}
-
-                                    <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}
-                                    </li>
-
-                                    {% endif %}
-
-                                    {% if video_details_lst['like_count']|length < 4 %} {% set
-                                        like_count=video_details_lst['like_count'] %} <li><i
-                                            class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{
-                                        like_count }}</li>
-                                        {% elif 6 > video_details_lst['like_count']|length > 3 %}
-                                        {% set like_count =
-                                        video_details_lst['like_count'][:video_details_lst['like_count']|length-3] + "
-                                        K+"%}
-                                        <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{
-                                            like_count }}</li>
-                                        {% else %}
-                                        {% set like_count =
-                                        video_details_lst['like_count'][:video_details_lst['like_count']|length-5] + "
-                                        L+"%}
-
-                                        <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> {{
-                                            like_count }}</li>
-
-                                        {% endif %}
-
-                                        {% if video_details_lst['comments_count'] == 0 %}
-                                        <li><i class="fa-solid fa-message" style="color: purple;"></i></i> Not Available
-                                        </li>
-                                        {% elif video_details_lst['comments_count']|length < 4 %} {% set
-                                            comments_count=video_details_lst['comments_count'] %} <li><i
-                                                class="fa-solid fa-message" style="color: purple;"></i> {{
-                                            comments_count }}</li>
-                                            {% elif 6 > video_details_lst['comments_count']|length > 3 %}
-                                            {% set comments_count =
-                                            video_details_lst['comments_count'][:video_details_lst['comments_count']|length-3]
-                                            + " K+"%}
-                                            <li><i class="fa-solid fa-message" style="color: purple;"></i></i> {{
-                                                comments_count }}</li>
+                            
+                            <div class="detail-wrap" style="display: flex; justify-content: space-between; width: 100%;">
+                                <div class="filter_buttons" style="display: flex; flex-direction: column; width:43%">
+                                    <ul class="like_view"
+                                        style="margin-top: 10px; float: none; display: flex; gap: 30px; color: white; font-size: 1.2em">
+        
+                                        {% if video_details_lst['view_count']|length < 4 %} {% set
+                                            view_count=video_details_lst['view_count'] %} <li><i class="fa-solid fa-eye"
+                                                style="color: yellow;"></i> &nbsp;{{ view_count }}</li>
+                                            {% elif 6 > video_details_lst['view_count']|length > 3 %}
+                                            {% set view_count =
+                                            video_details_lst['view_count'][:video_details_lst['view_count']|length-3] + " K+"%}
+                                            <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}
+                                            </li>
                                             {% else %}
-                                            {% set comments_count =
-                                            video_details_lst['comments_count'][:video_details_lst['comments_count']|length-5]
-                                            + " L+"%}
-
-                                            <li><i class="fa-solid fa-message" style="color: purple;"></i></i> {{
-                                                comments_count }}</li>
-
+                                            {% set view_count =
+                                            video_details_lst['view_count'][:video_details_lst['view_count']|length-5] + " L+"%}
+        
+                                            <li><i class="fa-solid fa-eye" style="color: yellow;"></i> &nbsp;{{ view_count }}
+                                            </li>
+        
                                             {% endif %}
+        
+                                            {% if video_details_lst['like_count']|length < 4 %} {% set
+                                                like_count=video_details_lst['like_count'] %} <li><i
+                                                    class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{
+                                                like_count }}</li>
+                                                {% elif 6 > video_details_lst['like_count']|length > 3 %}
+                                                {% set like_count =
+                                                video_details_lst['like_count'][:video_details_lst['like_count']|length-3] + "
+                                                K+"%}
+                                                <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> &nbsp;{{
+                                                    like_count }}</li>
+                                                {% else %}
+                                                {% set like_count =
+                                                video_details_lst['like_count'][:video_details_lst['like_count']|length-5] + "
+                                                L+"%}
+        
+                                                <li><i class="fa-regular fa-thumbs-up" style="color: #ec6090;"></i> {{
+                                                    like_count }}</li>
+        
+                                                {% endif %}
+        
+                                                {% if video_details_lst['comments_count'] == 0 %}
+                                                <li><i class="fa-solid fa-message" style="color: purple;"></i></i> Not Available
+                                                </li>
+                                                {% elif video_details_lst['comments_count']|length < 4 %} {% set
+                                                    comments_count=video_details_lst['comments_count'] %} <li><i
+                                                        class="fa-solid fa-message" style="color: purple;"></i> {{
+                                                    comments_count }}</li>
+                                                    {% elif 6 > video_details_lst['comments_count']|length > 3 %}
+                                                    {% set comments_count =
+                                                    video_details_lst['comments_count'][:video_details_lst['comments_count']|length-3]
+                                                    + " K+"%}
+                                                    <li><i class="fa-solid fa-message" style="color: purple;"></i></i> {{
+                                                        comments_count }}</li>
+                                                    {% else %}
+                                                    {% set comments_count =
+                                                    video_details_lst['comments_count'][:video_details_lst['comments_count']|length-5]
+                                                    + " L+"%}
+        
+                                                    <li><i class="fa-solid fa-message" style="color: purple;"></i></i> {{
+                                                        comments_count }}</li>
+        
+                                                    {% endif %}
+        
+        
+                                    </ul>
+                                    <div class="filter_words">
+                                        <p style="color: #ec6090; font-size: 1.5em; font-weight: 600; margin: 20px 0 10px">Select no. of. words:</p>
+                                        <select name="cars" id="cars" style="width: 100%; padding: 6px 2px; border-radius: 5px; font-weight: 500;">
+                                            <option value="250">250</option>
+                                            <option value="300">300</option>
+                                            <option value="350">350</option>
+                                            <option value="400">400</option>
+                                        </select>
+                                    </div>
+                                    <div style="margin-top: 15px; width: 100%; ">
+                                        <a href="/summary/rapid" class="summary-button"
+                                            style="display: flex; justify-content: center; font-size: 1.1em; padding: 5px 20px; background: yellow; color: black; font-weight: 600; border-radius: 5px;">
+                                            Rapid Summary
+                                        </a>
+                                    </div>
+                                    <div style="margin-top: 15px; width: 100%; ">
+                                        <a href="/summary/detailed" class="summary-button"
+                                            style="display: flex; justify-content: center; font-size: 1.1em; padding: 5px 20px; background: yellow; color: black; font-weight: 600; border-radius: 5px;">
+                                            Detailed Summary
+                                        </a>
+                                    </div>
+                                </div>
 
+                                <div id="chartContainer" style="height: 220px; width: 40%; border-radius: 10px; margin-top: 20px"></div>
 
-                            </ul>
+                            </div>
 
                         </div>
                     </div>
@@ -169,10 +203,10 @@
                         <div class="heading-section">
                             <h4>Summary</h4>
                             <div class="details-wrap" style="display: flex; justify-content: space-between;">
-                                <div style="width: fit-content; display: flex; flex-direction: column; gap: 15px">
+                                <div style="width: fit-content; display: flex; flex-direction: column; gap: 15px; width: 100%">
 
                                     <div class="text-box"
-                                        style=" width: 800px; background-color: #1B1B1B; padding: 20px 14px; height: auto; border-radius: 6px;">
+                                        style=" width: 100%; background-color: #1B1B1B; padding: 20px 14px; height: auto; border-radius: 6px;">
                                         <textarea readonly id="message" rows="12"
                                             style="width: 100%; background: transparent; color: white; border: none; height: 100%; ">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ad quod dolor, ullam quam veniam dolorem pariatur hic doloribus dolores, inventore officia minus fugiat similique suscipit, fuga explicabo. Iste, praesentium perspiciatis.</textarea>
                                     </div>
@@ -182,7 +216,7 @@
                                             Aloud</a>
                                     </div>
                                 </div>
-                                <div id="chartContainer" style="height: 335px; width: 350px; border-radius: 10px"></div>
+                                
                             </div>
                         </div>
                     </div>
@@ -259,11 +293,11 @@
           fontColor: "white",
           fontWeight: "lighter",
         },
-        backgroundColor: "#1B1B1B", // Set chart background to transparent
+        backgroundColor: "transparent", // Set chart background to transparent
         data: [
           {
             type: "doughnut",
-            innerRadius: "60%",
+            innerRadius: "70%",
             indexLabelFontColor: "white",
             dataPoints: [
               { y: 10, indexLabel: "Neutral" },
