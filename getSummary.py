@@ -27,14 +27,14 @@ def generate_summary(audio_txt_path, video_json_path):
     messages=[
         {
         "role": "system",
-        "content": "Summarize the content of a video in detail. You are provided a audio.txt file which has captions generated from the audio of the video and a json file which has array of keywords generated from image captioning of the video. Make the summary as detailed as possible with minimum of 250 and maximum of 500 words."
+        "content": "Summarize the content of a video in detail. You are provided a audio.txt file which has captions generated from the audio of the video and a json file which has array of keywords generated from image captioning of the video. Make the summary as detailed as possible with minimum of 300 and maximum of 500 words. Do not include filenames in the summary."
         },
         {
         "role": "user",
         "content": text_to_summarize
         }
     ],
-    temperature=0.7,
+    temperature=1.0,
     max_tokens=500,
     top_p=1
     )
@@ -45,7 +45,7 @@ def generate_summary(audio_txt_path, video_json_path):
 
 def generate_summary_audio(audio_txt_path):
     # Load audio captions from audio.txt
-    print("generatig summary....")
+    print("generating summary....")
     with open(audio_txt_path, 'r') as audio_file:
         audio_captions = audio_file.read()
 
@@ -60,14 +60,14 @@ def generate_summary_audio(audio_txt_path):
     messages=[
         {
         "role": "system",
-        "content": "Summarize the content of a video in detail. You are provided a audio.txt file which has captions generated from the audio of the video and a json file which has array of keywords generated from image captioning of the video. Make the summary as detailed as possible with minimum of 250 and maximum of 500 words."
+        "content": "Summarize the content of a video in detail. You are provided a audio.txt file which has captions generated from the audio of the video and a json file which has array of keywords generated from image captioning of the video. Make the summary as detailed as possible with minimum of 200 and maximum of 350 words."
         },
         {
         "role": "user",
         "content": text_to_summarize
         }
     ],
-    temperature=0.7,
+    temperature=1.0,
     max_tokens=500,
     top_p=1
     )
