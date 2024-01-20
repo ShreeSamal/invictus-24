@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="{{url_for('static', filename = 'css/owl.css')}}" />
     <link rel="stylesheet" href="{{url_for('static', filename = 'css/animate.css')}}" />
     <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
 </head>
 
 <body>
@@ -86,6 +88,28 @@
     </footer>
     <!-- Footer Ends -->
 
+    <style>
+        .floating-button-mic{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            position: fixed;
+            bottom: 50px;
+            left: 50px;
+            background: #ec6090;
+            color: white;
+            font-size: 2em;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+    <!-- Voice Navigation -->
+    <div class="floating-button-mic" id="startVoiceNavigationBtn">
+        <i class="fa-solid fa-microphone"></i>
+    </div>
+
     <!-- Js Imports -->
     <script src="{{url_for('static', filename = 'vendor/jquery/jquery.min.js')}}"></script>
     <script src="{{url_for('static', filename = 'vendor/bootstrap/js/bootstrap.min.js')}}"></script>
@@ -96,6 +120,61 @@
     <script src="{{url_for('static', filename = 'js/tabs.js')}}"></script>
     <script src="{{url_for('static', filename = 'js/popup.js')}}"></script>
     <script src="{{url_for('static', filename = 'js/custom.js')}}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Your navigation functions
+            function navigateHome() {
+              console.log("Navigating home");
+              window.location.href = "/"
+              // Add your navigation logic here
+            }
+          
+            function navigateToAbout() {
+                console.log("Navigating About");
+                window.location.href = "/about"
+              // Add your navigation logic here, using the 'destination' parameter
+            }
+
+            function navigateToHistory() {
+                console.log("Navigating History");
+                window.location.href = "/history"
+              // Add your navigation logic here, using the 'destination' parameter
+            }
+
+            function navigateToLogout() {
+                console.log("Navigating Logout");
+                window.location.href = "/logout"
+              // Add your navigation logic here, using the 'destination' parameter
+            }
+
+            function navigateToLogin() {
+                console.log("Navigating Login");
+                window.location.href = "/user/login"
+              // Add your navigation logic here, using the 'destination' parameter
+            }
+          
+            // Start Annyang when the button is clicked
+            document.getElementById('startVoiceNavigationBtn').addEventListener('click', function() {
+              if (annyang) {
+                // Define your voice commands and link them to functions
+                var commands = {
+                  'home': navigateHome,
+                  'about us': navigateToAbout,
+                  'history': navigateToHistory,
+                  'logout': navigateToLogout,
+                  'login': navigateToLogin,
+                };
+          
+                // Add the commands to Annyang
+                annyang.addCommands(commands);
+          
+                // Start listening for voice commands
+                annyang.start();
+              }
+            });
+          });
+    </script>
 
 </body>
 

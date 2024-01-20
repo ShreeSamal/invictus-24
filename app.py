@@ -253,15 +253,18 @@ def home():
 
 @app.route("/trending/summary/<string:video_id>", methods=['GET', 'POST'])
 def trend_summary(video_id):
-    user = users.find_one({'email': session['invic_email']})
+    
+    if 'invic_email' in session:
+    
+        user = users.find_one({'email': session['invic_email']})
 
-    if user:
+        if user:
 
-        # Update the 'visited' field by appending the new 'video_id' to the list
-        users.update_one(
-            {'email': session['invic_email']},
-            {'$push': {'visited': video_id}}
-        )
+            # Update the 'visited' field by appending the new 'video_id' to the list
+            users.update_one(
+                {'email': session['invic_email']},
+                {'$push': {'visited': video_id}}
+            )
     stop_words = set(stopwords.words('english'))
     word_tokens = word_tokenize(video_details_dict[video_id]['title'])
     filtered_text = [word for word in word_tokens if word.lower() not in stop_words]
@@ -387,15 +390,19 @@ def caption_summary_audio(video_id):
 
 @app.route("/summary/<string:video_id>/<string:title>", methods=['GET', 'POST'])
 def summary(video_id, title):
-    user = users.find_one({'email': session['invic_email']})
+    
+    if 'invic_email' in session:
+        
+    
+        user = users.find_one({'email': session['invic_email']})
 
-    if user:
+        if user:
 
-        # Update the 'visited' field by appending the new 'video_id' to the list
-        users.update_one(
-            {'email': session['invic_email']},
-            {'$push': {'visited': video_id}}
-        )
+            # Update the 'visited' field by appending the new 'video_id' to the list
+            users.update_one(
+                {'email': session['invic_email']},
+                {'$push': {'visited': video_id}}
+            )
     stop_words = set(stopwords.words('english'))
     word_tokens = word_tokenize(title)
     filtered_text = [word for word in word_tokens if word.lower() not in stop_words]
