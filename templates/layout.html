@@ -53,15 +53,32 @@
                             <li><a href="details.html">Details</a></li>
                             <li><a href="streams.html">Streams</a></li> -->
                             <li>
-                                <a href="/user/login">Profile
+
+                                <a href="/user/login">Login
                                     <img src="{{url_for('static', filename = 'assets/images/profile-header.jpg')}}"
                                         alt="" /></a>
+                            
                             </li>
                         </ul>
                         <a class="menu-trigger">
                             <span>Menu</span>
                         </a>
                         <!-- ***** Menu End ***** -->
+                        <script>
+                            var name = ""
+                            fetch('/layout')
+                                .then(response => response.text())
+                                .then(data => {
+                                    name = data
+                                    if(name != ""){
+                                        document.getElementById("login").innerHTML = "Logout"
+                                    }
+                                    else{
+                                        document.getElementById("login").innerHTML = "Login"
+                                    }
+                                })
+                            
+                        </script>
                     </nav>
                 </div>
             </div>

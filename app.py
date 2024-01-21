@@ -492,5 +492,11 @@ def logout():
     session.clear()
     return redirect("/")
 
+@app.route('/layout', methods=['GET', 'POST'])
+def layout():
+    if 'invic_email' in session:
+        return session['invic_email']
+    return ""
+
 if __name__ == '__main__':  
    app.run(debug = True)
