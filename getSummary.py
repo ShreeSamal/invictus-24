@@ -27,7 +27,7 @@ def generate_summary(audio_txt_path, video_json_path):
     messages=[
         {
         "role": "system",
-        "content": "Summarize the content of a video in detail. You are provided a audio.txt file which has captions generated from the audio of the video and a json file which has array of keywords generated from image captioning of the video. Make the summary as detailed as possible with minimum of 300 and maximum of 500 words. Do not include filenames in the summary."
+        "content": "Summarize the content of a video in detail. You are provided a audio.txt file which has captions generated from the audio of the video and a json file which has array of keywords generated from image captioning of the video. Make the summary as detailed as possible with minimum of 300 and maximum of 500 words (strictly within this range). Do not include filenames in the summary."
         },
         {
         "role": "user",
@@ -35,7 +35,7 @@ def generate_summary(audio_txt_path, video_json_path):
         }
     ],
     temperature=1.0,
-    max_tokens=500,
+    max_tokens=1000,
     top_p=1
     )
 
@@ -60,7 +60,7 @@ def generate_summary_audio(audio_txt_path):
     messages=[
         {
         "role": "system",
-        "content": "Summarize the content of a video in detail. You are provided a audio.txt file which has captions generated from the audio of the video and a json file which has array of keywords generated from image captioning of the video. Make the summary as detailed as possible with minimum of 200 and maximum of 350 words."
+        "content": "Summarize the content of a video in detail. You are provided a audio.txt file which has captions generated from the audio of the video and a json file which has array of keywords generated from image captioning of the video. Make the summary as detailed as possible with minimum of 200 and maximum of 350 words (strictly within this range)."
         },
         {
         "role": "user",
@@ -68,7 +68,7 @@ def generate_summary_audio(audio_txt_path):
         }
     ],
     temperature=1.0,
-    max_tokens=500,
+    max_tokens=1000,
     top_p=1
     )
 

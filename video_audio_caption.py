@@ -138,7 +138,7 @@ def create_captions(url):
         filename = "temp.mp4"
         video_stream.download(output_path="inputs", filename=filename)
         output_folder = 'outputs'
-        convert_video_to_images(filename, output_folder, interval_seconds=20)
+        convert_video_to_images(filename, output_folder, interval_seconds=60)
         os.remove(f"inputs/{filename}")
     else:
         print("No video stream found")

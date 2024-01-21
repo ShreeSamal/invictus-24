@@ -250,7 +250,8 @@ def register():
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
-    return render_template("index.html", video_details_dict = video_details_dict)
+    
+    return render_template("index.html", video_details_dict = video_details_dict, status = layout(), current = "home")
 
 @app.route("/trending/summary/<string:video_id>", methods=['GET', 'POST'])
 def trend_summary(video_id):
@@ -284,12 +285,12 @@ def trend_summary(video_id):
     video = video_collection.find_one({'video_id':video_id})
     if video:
         if video["audio_video_summary"] != "":
-            return render_template("summary_trend.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_video_summary'],pos=lst[0],neg=lst[1],neu=lst[2])
+            return render_template("summary_trend.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_video_summary'],pos=lst[0],neg=lst[1],neu=lst[2], status = layout())
         elif video["audio_summary"] != "":
-            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_summary'],pos=lst[0],neg=lst[1],neu=lst[2])
+            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_summary'],pos=lst[0],neg=lst[1],neu=lst[2], status = layout())
         else:
-            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2])
-    return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2])
+            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2], status = layout())
+    return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2], status = layout())
 
 
 
@@ -353,7 +354,7 @@ def serach_results():
         return redirect("/summary/" + video_details_from_url['video_id'] + "/" + video_details_from_url['title'])
     else:
         search_video_dict = search_videos_top_10(keyword)
-        return render_template("search_result.html", search_video_dict = search_video_dict)
+        return render_template("search_result.html", search_video_dict = search_video_dict, status = layout())
 
 @app.route("/caption/summary/audio_video/<string:video_id>", methods=['GET', 'POST'])
 def caption_summary(video_id):
@@ -422,12 +423,12 @@ def summary(video_id, title):
     video = video_collection.find_one({'video_id':video_id})
     if video:
         if video["audio_video_summary"] != "":
-            return render_template("summary_trend.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_video_summary'],pos=lst[0],neg=lst[1],neu=lst[2])
+            return render_template("summary_trend.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_video_summary'],pos=lst[0],neg=lst[1],neu=lst[2], status = layout())
         elif video["audio_summary"] != "":
-            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_summary'],pos=lst[0],neg=lst[1],neu=lst[2])
+            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary=video['audio_summary'],pos=lst[0],neg=lst[1],neu=lst[2], status = layout())
         else:
-            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2])
-    return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2])
+            return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2], status = layout())
+    return render_template("summary.html", video_details_lst = video_detail_lst, recommended_video = OrderedDict(reversed(list(recommended_video.items()))), video_id = video_id, summary="",pos=lst[0],neg=lst[1],neu=lst[2], status = layout())
 
 def getChartData(video_id):
     request = youtube_A.commentThreads().list(part="snippet",videoId=video_id)
@@ -481,22 +482,22 @@ def history():
         for item in user_visited_route_set:
             visited_links[item] = get_video_details_link(item)
             
-    return render_template('history.html', name=session['invic_email'], search_video_dict = visited_links)
+    return render_template('history.html', name=session['invic_email'], search_video_dict = visited_links, status = layout(), current = "history")
 
 @app.route('/about', methods=['GET'])
 def aboutUs():
-    return render_template('aboutUs.html')
+    return render_template('aboutUs.html', status = layout(), current = "about")
 
 @app.route('/logout', methods=['GET', 'POST'])
+@login_required
 def logout():
     session.clear()
     return redirect("/")
 
-@app.route('/layout', methods=['GET', 'POST'])
 def layout():
     if 'invic_email' in session:
-        return session['invic_email']
-    return ""
+        return "Logout"
+    return "Login"
 
 if __name__ == '__main__':  
-   app.run(debug = True)
+   app.run(debug = False)
