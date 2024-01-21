@@ -196,6 +196,30 @@
                 window.location.href = "/user/login"
               // Add your navigation logic here, using the 'destination' parameter
             }
+
+            function searchInput(query){
+                if (query) {
+                // Create a hidden form dynamically
+                var form = document.createElement('form');
+                form.action = '/search/results';
+                form.method = 'POST';
+
+                // Create a hidden input field for the search keyword
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'searchKeyword';
+                input.value = query;
+
+                // Append the input field to the form
+                form.appendChild(input);
+
+                // Append the form to the document body
+                document.body.appendChild(form);
+
+                // Submit the form
+                form.submit();
+            }
+            }
           
             // Start Annyang when the button is clicked
             document.getElementById('startVoiceNavigationBtn').addEventListener('click', function() {
@@ -207,6 +231,7 @@
                   'history': navigateToHistory,
                   'logout': navigateToLogout,
                   'login': navigateToLogin,
+                  'search *query':searchInput
                 };
           
                 // Add the commands to Annyang
