@@ -16,10 +16,11 @@ from functools import wraps
 
 sia = SentimentIntensityAnalyzer()
 
-API_KEY_A = 'AIzaSyBbPQO0_-vLPU8kvgYbPbPlvzxKS0o4sUk'
+# API_KEY_A = 'AIzaSyBbPQO0_-vLPU8kvgYbPbPlvzxKS0o4sUk'
 # API_KEY_A = "AIzaSyB1f-xn81py9UruPLrMnYihldHuhONZU5U"
 #API_KEY_A = 'AIzaSyAjKBo9q945sacH_cR7_wxj8G7T8F3B6p0'
 # API_KEY_A = 'AIzaSyAhd2CrnNgjDMFwSTa1JFz27btz1rv6M24'
+API_KEY_A = 'AIzaSyA1cg5ojM3qjxNeP2w9TkWqQLWHUI8kzE0'
 
 youtube_A = googleapiclient.discovery.build('youtube', 'v3', developerKey=API_KEY_A)
 
