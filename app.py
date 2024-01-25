@@ -544,6 +544,3 @@ def layout():
     if 'invic_email' in session:
         return "Logout"
     return "Login"
-
-if __name__ == '__main__':  
-   app.run(debug = True)
