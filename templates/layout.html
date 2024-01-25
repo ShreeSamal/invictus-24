@@ -1,113 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RapidRecap</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
-        rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/d0c5f1e210.js" crossorigin="anonymous"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/d0c5f1e210.js"
+      crossorigin="anonymous"
+    ></script>
 
-    <link href="{{url_for('static', filename = 'vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" />
+    <link
+      href="{{url_for('static', filename = 'vendor/bootstrap/css/bootstrap.min.css')}}"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="{{url_for('static', filename = 'css/fontawesome.css')}}" />
-    <link rel="stylesheet" href="{{url_for('static', filename = 'css/templatemo-cyborg-gaming.css')}}" />
-    <link rel="stylesheet" href="{{url_for('static', filename = 'css/owl.css')}}" />
-    <link rel="stylesheet" href="{{url_for('static', filename = 'css/animate.css')}}" />
-    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename = 'css/fontawesome.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename = 'css/templatemo-cyborg-gaming.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename = 'css/owl.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename = 'css/animate.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper@7/swiper-bundle.min.css"
+    />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
+    <style>
+
+        .goog-te-gadget span{
+            display: none;
+        }
+        
+        .goog-te-gadget .goog-te-combo{
+            margin: 10px 0 0;
+            background: transparent;
+            color: #ec6090;
+            border-radius: 5px;
+            padding: 5px 10px;
+            width: 143px;
+        }
+       </style>
     <!-- Nav Bar Starts -->
     <header class="header-area header-sticky">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <nav class="main-nav">
-                        <!-- ***** Logo Start ***** -->
-                        <a href="/" class="logo">
-                            <img src="{{url_for('static', filename = 'assets/images/new_logo_pink.png')}}" alt="" />
-                        </a>
-                        <!-- ***** Logo End ***** -->
-                        <!-- ***** Search End ***** -->
-                        <div class="search-input" style="display: flex; justify-content: space-between; align-items: center;">
-                            <form id="search" action="/search/results" style="flex-grow: 2; display: flex" method="post">
-                                <input type="text" placeholder="Type Something" id="searchText" name="searchKeyword"
-                                    onkeypress="handle" />
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <button type="submit" class="search-btn" style="height: 46px; border: none; padding: 8px; border-top-right-radius: 23px; border-bottom-right-radius: 23px; background-color: #27292a;">🔎</button>
-                            </form>
-                        </div>
-                        <!-- ***** Search End ***** -->
-                        <!-- ***** Menu Start ***** -->
-                        <ul class="nav">
-                            {% if current == "home" %}
-                            <li><a href="/" class="active">Home</a></li>
-                            {% else %}
-                            <li><a href="/">Home</a></li>
-                            {% endif %}
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <nav class="main-nav">
+              <!-- ***** Logo Start ***** -->
+              <a href="/" class="logo">
+                <img
+                  src="{{url_for('static', filename = 'assets/images/new_logo_pink.png')}}"
+                  alt=""
+                />
+              </a>
+              <!-- ***** Logo End ***** -->
+              <!-- ***** Search End ***** -->
+              <div
+                class="search-input"
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                "
+              >
+                <form
+                  id="search"
+                  action="/search/results"
+                  style="flex-grow: 2; display: flex"
+                  method="post"
+                >
+                  <input
+                    type="text"
+                    placeholder="Type Something"
+                    id="searchText"
+                    name="searchKeyword"
+                    onkeypress="handle"
+                  />
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <button
+                    type="submit"
+                    class="search-btn"
+                    style="
+                      height: 46px;
+                      border: none;
+                      padding: 8px;
+                      border-top-right-radius: 23px;
+                      border-bottom-right-radius: 23px;
+                      background-color: #27292a;
+                    "
+                  >
+                    🔎
+                  </button>
+                </form>
+              </div>
+              <!-- ***** Search End ***** -->
+              <!-- ***** Menu Start ***** -->
+              <ul class="nav">
+                <li><div id="google_translate_element"></div></li>
 
-                            {% if current == "upload" %}
-                            <li><a href="/upload" class="active">Upload</a></li>
-                            {% else %}
-                            <li><a href="/upload">Upload</a></li>
-                            {% endif %}
-
-                            {% if current == "history" %}
-                            <li><a href="/history" class="active">History</a></li>
-                            {% else %}
-                            <li><a href="/history">History</a></li>
-                            {% endif %}
-
-                            {% if current == "about" %}
-                            <li><a href="/about" class="active">About Us</a></li>
-                            {% else %}
-                            <li><a href="/about">About Us</a></li>
-                            {% endif %}
-                            <!-- <li><a href="browse.html">Browse</a></li>
+                {% if current == "home" %}
+                <li><a href="/" class="active">Home</a></li>
+                {% else %}
+                <li><a href="/">Home</a></li>
+                {% endif %} {% if current == "upload" %}
+                <li><a href="/upload" class="active">Upload</a></li>
+                {% else %}
+                <li><a href="/upload">Upload</a></li>
+                {% endif %} {% if current == "history" %}
+                <li><a href="/history" class="active">History</a></li>
+                {% else %}
+                <li><a href="/history">History</a></li>
+                {% endif %} {% if current == "about" %}
+                <li><a href="/about" class="active">About Us</a></li>
+                {% else %}
+                <li><a href="/about">About Us</a></li>
+                {% endif %}
+                <!-- <li><a href="browse.html">Browse</a></li>
                             <li><a href="details.html">Details</a></li>
                             <li><a href="streams.html">Streams</a></li> -->
-                            <li>
-
-                                {% if status == "Login" %}
-                                <a href="/user/login">Login
-                                    <img src="{{url_for('static', filename = 'assets/images/profile-header.jpg')}}"
-                                        alt="" /></a>
-                                {% else %}
-                                <a href="/logout">Logout
-                                    <img src="{{url_for('static', filename = 'assets/images/profile-header.jpg')}}"
-                                        alt="" /></a>
-                                {% endif %}
-                            
-                            </li>
-                        </ul>
-                        <a class="menu-trigger">
-                            <span>Menu</span>
-                        </a>
-                        <!-- ***** Menu End ***** -->
-                        <script>
-                            var name = ""
-                            fetch('/layout')
-                                .then(response => response.text())
-                                .then(data => {
-                                    name = data
-                                    if(name != ""){
-                                        document.getElementById("login").innerHTML = "Logout"
-                                    }
-                                    else{
-                                        document.getElementById("login").innerHTML = "Login"
-                                    }
-                                })
-                            
-                        </script>
-                    </nav>
-                </div>
-            </div>
+                <li>
+                  {% if status == "Login" %}
+                  <a href="/user/login"
+                    >Login
+                    <img
+                      src="{{url_for('static', filename = 'assets/images/profile-header.jpg')}}"
+                      alt=""
+                  /></a>
+                  {% else %}
+                  <a href="/logout"
+                    >Logout
+                    <img
+                      src="{{url_for('static', filename = 'assets/images/profile-header.jpg')}}"
+                      alt=""
+                  /></a>
+                  {% endif %}
+                </li>
+              </ul>
+              <a class="menu-trigger">
+                <span>Menu</span>
+              </a>
+              <!-- ***** Menu End ***** -->
+              <script>
+                var name = "";
+                fetch("/layout")
+                  .then((response) => response.text())
+                  .then((data) => {
+                    name = data;
+                    if (name != "") {
+                      document.getElementById("login").innerHTML = "Logout";
+                    } else {
+                      document.getElementById("login").innerHTML = "Login";
+                    }
+                  });
+              </script>
+            </nav>
+          </div>
         </div>
+      </div>
     </header>
     <!-- Nav Bar Ends -->
 
@@ -115,42 +183,47 @@
 
     <!-- Footer Starts -->
     <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>
-                        Copyright © 2024 <a target="_blank" href="https://www.instagram.com/__cfrost__?igsh=YmNwMzFvZ2tlNjZh">Rapid Recap</a> (CFROST INC). All rights
-                        reserved.
-                        <!-- 
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <p>
+              Copyright © 2024
+              <a
+                target="_blank"
+                href="https://www.instagram.com/__cfrost__?igsh=YmNwMzFvZ2tlNjZh"
+                >Rapid Recap</a
+              >
+              (CFROST INC). All rights reserved.
+              <!-- 
                         <br />Design:
                         <a href="https://templatemo.com" target="_blank" title="free CSS templates">TemplateMo</a> -->
-                    </p>
-                </div>
-            </div>
+            </p>
+          </div>
         </div>
+      </div>
     </footer>
     <!-- Footer Ends -->
 
     <style>
-        .floating-button-mic{
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 60px;
-            height: 60px;
-            position: fixed;
-            bottom: 50px;
-            left: 50px;
-            background: #ec6090;
-            color: white;
-            font-size: 2em;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+      .floating-button-mic {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 60px;
+        height: 60px;
+        position: fixed;
+        bottom: 50px;
+        left: 50px;
+        background: #ec6090;
+        color: white;
+        font-size: 2em;
+        border-radius: 50%;
+        cursor: pointer;
+      }
     </style>
     <!-- Voice Navigation -->
     <div class="floating-button-mic" id="startVoiceNavigationBtn">
-        <i class="fa-solid fa-microphone"></i>
+      <i class="fa-solid fa-microphone"></i>
     </div>
 
     <!-- Js Imports -->
@@ -165,85 +238,99 @@
     <script src="{{url_for('static', filename = 'js/custom.js')}}"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Your navigation functions
-            function navigateHome() {
-              console.log("Navigating home");
-              window.location.href = "/"
-              // Add your navigation logic here
+      document.addEventListener("DOMContentLoaded", function () {
+        // Your navigation functions
+        function navigateHome() {
+          console.log("Navigating home");
+          window.location.href = "/";
+          // Add your navigation logic here
+        }
+
+        function navigateToAbout() {
+          console.log("Navigating About");
+          window.location.href = "/about";
+          // Add your navigation logic here, using the 'destination' parameter
+        }
+
+        function navigateToHistory() {
+          console.log("Navigating History");
+          window.location.href = "/history";
+          // Add your navigation logic here, using the 'destination' parameter
+        }
+
+        function navigateToLogout() {
+          console.log("Navigating Logout");
+          window.location.href = "/logout";
+          // Add your navigation logic here, using the 'destination' parameter
+        }
+
+        function navigateToLogin() {
+          console.log("Navigating Login");
+          window.location.href = "/user/login";
+          // Add your navigation logic here, using the 'destination' parameter
+        }
+
+        function searchInput(query) {
+          if (query) {
+            // Create a hidden form dynamically
+            var form = document.createElement("form");
+            form.action = "/search/results";
+            form.method = "POST";
+
+            // Create a hidden input field for the search keyword
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "searchKeyword";
+            input.value = query;
+
+            // Append the input field to the form
+            form.appendChild(input);
+
+            // Append the form to the document body
+            document.body.appendChild(form);
+
+            // Submit the form
+            form.submit();
+          }
+        }
+
+        // Start Annyang when the button is clicked
+        document
+          .getElementById("startVoiceNavigationBtn")
+          .addEventListener("click", function () {
+            if (annyang) {
+              // Define your voice commands and link them to functions
+              var commands = {
+                home: navigateHome,
+                "about us": navigateToAbout,
+                history: navigateToHistory,
+                logout: navigateToLogout,
+                login: navigateToLogin,
+                "search *query": searchInput,
+              };
+
+              // Add the commands to Annyang
+              annyang.addCommands(commands);
+
+              // Start listening for voice commands
+              annyang.start();
             }
-          
-            function navigateToAbout() {
-                console.log("Navigating About");
-                window.location.href = "/about"
-              // Add your navigation logic here, using the 'destination' parameter
-            }
-
-            function navigateToHistory() {
-                console.log("Navigating History");
-                window.location.href = "/history"
-              // Add your navigation logic here, using the 'destination' parameter
-            }
-
-            function navigateToLogout() {
-                console.log("Navigating Logout");
-                window.location.href = "/logout"
-              // Add your navigation logic here, using the 'destination' parameter
-            }
-
-            function navigateToLogin() {
-                console.log("Navigating Login");
-                window.location.href = "/user/login"
-              // Add your navigation logic here, using the 'destination' parameter
-            }
-
-            function searchInput(query){
-                if (query) {
-                // Create a hidden form dynamically
-                var form = document.createElement('form');
-                form.action = '/search/results';
-                form.method = 'POST';
-
-                // Create a hidden input field for the search keyword
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'searchKeyword';
-                input.value = query;
-
-                // Append the input field to the form
-                form.appendChild(input);
-
-                // Append the form to the document body
-                document.body.appendChild(form);
-
-                // Submit the form
-                form.submit();
-            }
-            }
-          
-            // Start Annyang when the button is clicked
-            document.getElementById('startVoiceNavigationBtn').addEventListener('click', function() {
-              if (annyang) {
-                // Define your voice commands and link them to functions
-                var commands = {
-                  'home': navigateHome,
-                  'about us': navigateToAbout,
-                  'history': navigateToHistory,
-                  'logout': navigateToLogout,
-                  'login': navigateToLogin,
-                  'search *query':searchInput
-                };
-          
-                // Add the commands to Annyang
-                annyang.addCommands(commands);
-          
-                // Start listening for voice commands
-                annyang.start();
-              }
-            });
           });
+      });
     </script>
 
-</body>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          { pageLanguage: "en" },
+          "google_translate_element"
+        );
+      }
+    </script>
 
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
+  </body>
 </html>
