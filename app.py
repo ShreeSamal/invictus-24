@@ -34,6 +34,7 @@ app.secret_key = "hqvfiuqeogfqlbqljl"
 uri = "mongodb+srv://cfrost:P2JVTwefRIFHUWQX@invictus24.ilfsi9p.mongodb.net/?retryWrites=true&w=majority"
 
 # Create a new client and connect to the server
+stop_words = set(stopwords.words('english'))
 client = MongoClient(uri, server_api=ServerApi('1'))
 bcrypt = Bcrypt(app)
 # Send a ping to confirm a successful connection
@@ -268,7 +269,6 @@ def trend_summary(video_id):
                 {'email': session['invic_email']},
                 {'$push': {'visited': video_id}}
             )
-    stop_words = set(stopwords.words('english'))
     word_tokens = word_tokenize(video_details_dict[video_id]['title'])
     filtered_text = [word for word in word_tokens if word.lower() not in stop_words]
     
@@ -282,7 +282,8 @@ def trend_summary(video_id):
     video_detail_lst = video_details_dict[video_id]
     # if (recommended_video[video_id]):
     #     del recommended_video[video_id]
-    lst = getChartData(video_id)
+    #lst = getChartData(video_id)
+    lst = [10,10,10]
     video = video_collection.find_one({'video_id':video_id})
     if video:
         if video["audio_video_summary"] != "":
@@ -406,7 +407,6 @@ def summary(video_id, title):
                 {'email': session['invic_email']},
                 {'$push': {'visited': video_id}}
             )
-    stop_words = set(stopwords.words('english'))
     word_tokens = word_tokenize(title)
     filtered_text = [word for word in word_tokens if word.lower() not in stop_words]
     
@@ -418,7 +418,8 @@ def summary(video_id, title):
     
     recommended_video = search_videos(new_text)
     video_detail_lst = get_video_details(video_id)
-    lst = getChartData(video_id)
+    #lst = getChartData(video_id)
+    lst = [10,10,10]
     # if (recommended_video[video_id]):
     #     del recommended_video[video_id]
     video = video_collection.find_one({'video_id':video_id})
@@ -470,6 +471,50 @@ def getChartData(video_id):
         else:
             neu += 1
     return [int(100* pos//total), int(100* neg//total), int(100* neu//total)]
+
+@app.route("/chart/<string:video_id>", methods=['GET', 'POST'])
+def chart(video_id):
+    print("called chart")
+    request = youtube_A.commentThreads().list(part="snippet",videoId=video_id)
+
+    comments = []
+    likes = []
+    response = request.execute()
+
+    for item in response['items']:
+        com = item['snippet']['topLevelComment']['snippet']
+        comments.append(com['textOriginal'])
+        likes.append(com['likeCount']+1)
+
+    while (True):
+        try:
+            nextPageToken = response['nextPageToken']
+        except KeyError:
+            break
+        nextPageToken = response['nextPageToken']
+        nextRequest = youtube_A.commentThreads().list(part="snippet", videoId=video_id, pageToken=nextPageToken)
+        response = nextRequest.execute()
+
+        for item in response['items']:
+            com = item['snippet']['topLevelComment']['snippet']
+            comments.append(com['textOriginal'])
+            likes.append(com['likeCount']+1)
+
+    pos = 0
+    neg = 0
+    neu = 0
+    total = len(comments)
+    if total == 0:
+        total = 1
+    for i in comments:
+        score = sia.polarity_scores(i)['compound']
+        if score > 0 :
+            pos += 1
+        elif score < 0:
+            neg += 1
+        else:
+            neu += 1
+    return jsonify( { "pos":int(100* pos//total), "neg":int(100* neg//total) ,"neu":int(100* neu//total)} )
 
 @app.route('/history', methods=['GET'])
 @login_required 

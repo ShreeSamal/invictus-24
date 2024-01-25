@@ -197,7 +197,11 @@
                                             Aloud</a>
                                     </div>
                                 </div>
-                                <div id="chartContainer" style="height: 335px; width: 350px; border-radius: 10px"></div>
+                                <div class="" id="chartContainer-before" style="height: 220px; width: 40%; border-radius: 10px; margin-top: 20px; display: flex;align-items: center;justify-content: center;"><a id="chart-data" href="#" class="summary-button"
+                                    style="display: flex; justify-content: center; font-size: 1.1em; padding: 5px 20px; background: yellow; color: black; font-weight: 600; border-radius: 5px;">
+                                    <span id="comment-analyze">Get Comment Analysis</span>
+                                </a></div>
+                                <div class="hidden" id="chartContainer" style="height: 220px; width: 40%; border-radius: 10px; margin-top: 20px"></div>
                             </div>
                         </div>
                     </div>
@@ -267,30 +271,40 @@
 </script>
 
 <script type="text/javascript">
-    window.onload = function () {
+        $("#chart-data").click(async function () {
+        comment_analyze = document.getElementById("comment-analyze");
+        comment_analyze.innerHTML = "Fetching...";
+        id = "{{video_id}}";
+        const res = await fetch("/chart/"+id);
+        const lst = await res.json();
+        pos = lst['pos'];
+        neg = lst['neg'];
+        neu = lst['neu'];
+        $("#chartContainer").removeClass("hidden");
       var chart = new CanvasJS.Chart("chartContainer", {
         title: {
           text: "Distribution of Comments in %",
           fontColor: "white",
           fontWeight: "lighter",
         },
-        backgroundColor: "#1B1B1B", // Set chart background to transparent
+        backgroundColor: "transparent", // Set chart background to transparent
         data: [
           {
             type: "doughnut",
-            innerRadius: "60%",
+            innerRadius: "70%",
             indexLabelFontColor: "white",
             dataPoints: [
-            { y: "{{pos}}", indexLabel: "Neutral" },
-              { y: "{{neg}}", indexLabel: "Negative" },
-              { y: "{{neu}}", indexLabel: "Positive" },
+              { y: pos, indexLabel: "Neutral" },
+              { y: neg, indexLabel: "Negative" },
+              { y: neu, indexLabel: "Positive" },
             ],
           },
         ],
       });
-  
+      document .getElementById("chartContainer-before").style.display = "none";
       chart.render();
-    };
+    });
+  
 </script>
 
 <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
