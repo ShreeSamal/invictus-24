@@ -1,6 +1,6 @@
 from openai import OpenAI
 import json
-
+import os
 client = OpenAI(api_key='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')
 
 def generate_summary(audio_txt_path, video_json_path):
@@ -40,7 +40,9 @@ def generate_summary(audio_txt_path, video_json_path):
     )
 
     summary = response.choices[0].message.content
-
+    #delete the temp files
+    os.remove(audio_txt_path)
+    os.remove(video_json_path)
     return summary
 
 def generate_summary_audio(audio_txt_path):
@@ -73,7 +75,8 @@ def generate_summary_audio(audio_txt_path):
     )
 
     summary = response.choices[0].message.content
-
+    #delete the temp files
+    os.remove(audio_txt_path)
     return summary
 
 # Example usage
